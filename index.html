@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repository Idea Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #333333 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4"><rect fill="%23333333" width="4" height="4"/><rect fill="%23222222" x="1" y="1" width="1" height="1"/><rect fill="%23222222" y="3" width="1" height="1"/><rect fill="%23222222" x="3" y="0" width="1" height="1"/></svg>');
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: #f5f5f5;
+            border: 2px solid #999999;
+            border-radius: 8px;
+            box-shadow: 
+                inset 1px 1px 0 #ffffff,
+                inset -1px -1px 0 #808080,
+                3px 3px 5px rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            max-width: 650px;
+            width: 100%;
+            background: linear-gradient(to bottom, #ffffff, #e8e8e8);
+        }
+
+        h1 {
+            text-align: center;
+            color: #003366;
+            margin-bottom: 5px;
+            font-size: 1.8em;
+            text-shadow: 1px 1px 0 #ffffff;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666666;
+            margin-bottom: 25px;
+            font-size: 0.9em;
+        }
+
+        .idea-display {
+            background: #ffffcc;
+            border: 2px solid #999999;
+            border-radius: 6px;
+            padding: 25px;
+            margin-bottom: 25px;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #333333;
+            text-align: center;
+            box-shadow: 
+                inset 1px 1px 0 #ffffff,
+                inset -1px -1px 0 #808080,
+                2px 2px 4px rgba(0, 0, 0, 0.2);
+            font-family: Georgia, serif;
+        }
+
+        .idea-title {
+            font-size: 1.6em;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #003366;
+        }
+
+        .idea-description {
+            font-size: 0.95em;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            color: #333333;
+        }
+
+        .idea-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 12px;
+        }
+
+        .tag {
+            background: #ccccff;
+            color: #000066;
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            border: 1px solid #6666cc;
+            font-weight: bold;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        button {
+            flex: 1;
+            padding: 10px 20px;
+            font-size: 0.95em;
+            border: 2px solid;
+            border-color: #dfdfdf #808080 #808080 #dfdfdf;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.1s ease;
+            background: linear-gradient(to bottom, #f0f0f0, #e0e0e0);
+            color: #000000;
+            font-family: Arial, sans-serif;
+        }
+
+        button:active {
+            border-color: #808080 #dfdfdf #dfdfdf #808080;
+            box-shadow: inset 1px 1px 0 #ffffff, inset -1px -1px 0 #808080;
+        }
+
+        button:hover {
+            background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+        }
+
+        .btn-generate {
+            background: linear-gradient(to bottom, #0078d7, #005a9e);
+            color: #ffffff;
+            border-color: #dfdfdf #404040 #404040 #dfdfdf;
+        }
+
+        .btn-generate:hover {
+            background: linear-gradient(to bottom, #1084e0, #0066b3);
+        }
+
+        .btn-copy {
+            background: linear-gradient(to bottom, #f0f0f0, #e0e0e0);
+            color: #000000;
+        }
+
+        .copy-feedback {
+            text-align: center;
+            color: #008000;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .copy-feedback.show {
+            opacity: 1;
+        }
+
+        .filter-section {
+            margin-bottom: 20px;
+            background: linear-gradient(to bottom, #e8e8e8, #d9d9d9);
+            padding: 15px;
+            border: 2px solid #999999;
+            border-radius: 6px;
+            box-shadow: 
+                inset 1px 1px 0 #ffffff,
+                inset -1px -1px 0 #808080;
+        }
+
+        .filter-label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #003366;
+            display: block;
+            font-size: 0.95em;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border: 2px solid;
+            border-color: #dfdfdf #808080 #808080 #dfdfdf;
+            background: linear-gradient(to bottom, #f0f0f0, #e0e0e0);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: bold;
+            color: #000000;
+            transition: all 0.1s ease;
+        }
+
+        .filter-btn:hover {
+            background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(to bottom, #0078d7, #005a9e);
+            color: #ffffff;
+            border-color: #dfdfdf #404040 #404040 #dfdfdf;
+            box-shadow: inset 1px 1px 0 rgba(255,255,255,0.3), inset -1px -1px 0 rgba(0,0,0,0.3);
+        }
+
+        .filter-btn:active {
+            border-color: #808080 #dfdfdf #dfdfdf #808080;
+            box-shadow: inset 1px 1px 0 #ffffff, inset -1px -1px 0 #808080;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.4em;
+            }
+
+            .idea-title {
+                font-size: 1.2em;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .filter-options {
+                flex-direction: column;
+            }
+
+            .filter-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Repository Idea Generator</h1>
+        <p class="subtitle">for when your bored as hell and want to make something</p>
+
+        <div class="filter-section">
+            <label class="filter-label">filter by category:</label>
+            <div class="filter-options">
+                <button class="filter-btn active" data-category="all">All</button>
+                <button class="filter-btn" data-category="web">Web</button>
+                <button class="filter-btn" data-category="cli">CLI</button>
+                <button class="filter-btn" data-category="library">Library</button>
+                <button class="filter-btn" data-category="automation">Automation</button>
+                <button class="filter-btn" data-category="data">Data</button>
+            </div>
+        </div>
+
+        <div class="idea-display" id="ideaDisplay">
+            <div class="idea-title">Click "Generate Idea" to start</div>
+            <div class="idea-description">Get random repository ideas to inspire your next project</div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn-generate" id="generateBtn">Generate Idea</button>
+            <button class="btn-copy" id="copyBtn">Copy Idea</button>
+        </div>
+
+        <div class="copy-feedback" id="copyFeedback">Copied to clipboard! ✓</div>
+    </div>
+
+    <script>
+        const ideas = [
+            // ========== WEB (30+ ideas) ==========
+            {title: "Task Management API", description: "RESTful API for managing tasks with real-time collaboration features and webhook support", category: "web", tags: ["Node.js", "Express", "WebSockets", "MongoDB"]},
+            {title: "Markdown Blog Engine", description: "Lightweight static site generator for blogs with support for custom themes and SEO optimization", category: "web", tags: ["JavaScript", "Markdown", "Static Gen"]},
+            {title: "Progressive Web App Framework", description: "Framework for building offline-first progressive web apps with service workers and caching", category: "web", tags: ["PWA", "ServiceWorkers", "JavaScript"]},
+            {title: "Real-time Chat Application", description: "Full-stack chat app with encryption, file sharing, and desktop notifications", category: "web", tags: ["React", "Node.js", "Socket.io", "PostgreSQL"]},
+            {title: "GraphQL API Gateway", description: "GraphQL gateway that aggregates multiple REST and GraphQL APIs into a single endpoint", category: "web", tags: ["GraphQL", "Node.js", "Microservices"]},
+            {title: "Quiz Platform", description: "Web app for creating, sharing, and taking quizzes with scores and leaderboards", category: "web", tags: ["React", "Firebase", "Gamification"]},
+            {title: "Custom Short URL Service", description: "Self-hosted URL shortener with analytics and QR code support", category: "web", tags: ["Node.js", "Express", "MongoDB", "QR"]},
+            {title: "Web-based Kanban Board", description: "Trello-like task board with drag-and-drop and multi-user support", category: "web", tags: ["Vue.js", "Firebase", "Drag-Drop"]},
+            {title: "Personal Finance Dashboard", description: "Dashboard for visualizing transactions, budgets, and investments", category: "web", tags: ["React", "D3.js", "OAuth", "Banking"]},
+            {title: "Recipe Sharing Platform", description: "Web app to share, discover, and rate recipes with photo uploads", category: "web", tags: ["Django", "Bootstrap", "Images"]},
+            {title: "Book Exchange Network", description: "Portal for users to find, lend, and borrow books locally", category: "web", tags: ["Node.js", "Express", "MongoDB", "Maps"]},
+            {title: "Simple Portfolio Generator", description: "Generate beautiful web portfolios from JSON/YAML files", category: "web", tags: ["HTML", "CSS", "Templating"]},
+            {title: "Open Source Roadmap", description: "Roadmap builder for open source projects with markdown export", category: "web", tags: ["React", "Editors.js", "JSON"]},
+            {title: "FOSS License Selector", description: "Tool to compare licenses and create custom boilerplate files", category: "web", tags: ["JavaScript", "Legal", "License"]},
+            {title: "MP3 Metadata Editor", description: "Web app to edit tags and covers for music collections", category: "web", tags: ["JavaScript", "ID3", "UI"]},
+            {title: "Pomodoro Timer", description: "Distraction-free web Pomodoro app with notifications and stats", category: "web", tags: ["HTML", "CSS", "JavaScript"]},
+            {title: "Web Whiteboard", description: "Collaborative online drawing board with real-time sync", category: "web", tags: ["Canvas", "WebRTC", "Real-Time"]},
+            {title: "Habit Tracker", description: "Track, visualize, and get reminders for daily habits", category: "web", tags: ["React", "Charts", "Notifications"]},
+            {title: "Resume Builder", description: "Wizard for stylish resume creation and PDF/HTML export", category: "web", tags: ["PDF", "Forms", "Export"]},
+            {title: "Expense Splitter", description: "Tool to split group bills and settle debts with friends", category: "web", tags: ["Vue", "Finance", "SQLite"]},
+            {title: "Workout Logger", description: "Track workouts and calories with graphs and shareability", category: "web", tags: ["React", "Charts", "Health"]},
+            {title: "PDF Compressor", description: "Web tool to shrink PDF file sizes", category: "web", tags: ["PDF", "Compression", "Node.js"]},
+            {title: "Discord Bot Platform", description: "App for quickly building and deploying Discord bots", category: "web", tags: ["Discord", "Bots", "Node.js"]},
+            {title: "Static Blog Analytics", description: "Privacy-friendly analytics for static sites", category: "web", tags: ["JavaScript", "Analytics"]},
+            {title: "Personal Knowledge Base", description: "Local markdown-based wiki system", category: "web", tags: ["React", "Markdown", "SQLite"]},
+            {title: "Crypto Portfolio Tracker", description: "Tracks multiple wallets and coins with price alerts", category: "web", tags: ["APIs", "Crypto", "Charts"]},
+            {title: "Offline Encyclopedia App", description: "Wikipedia reader for offline use", category: "web", tags: ["Offline", "Data", "Compression"]},
+            {title: "HTML Table Editor", description: "Edit tables and export as CSV/JSON/HTML", category: "web", tags: ["HTML", "Table", "Editors"]},
+            {title: "REST API Tester", description: "Send requests and test APIs from browser", category: "web", tags: ["API", "Test", "HTTP"]},
+            {title: "Modern Snake Game", description: "Classic snake with levels, scoring, online leaderboards", category: "web", tags: ["JavaScript", "Game", "Canvas"]},
+
+            // ========== CLI (25+ ideas) ==========
+            {title: "File Encryption Tool", description: "Lightweight CLI for encrypting and decrypting files with AES-256", category: "cli", tags: ["Python", "Cryptography", "Security"]},
+            {title: "Code Quality Analyzer", description: "CLI tool analyzing code and suggesting improvements", category: "cli", tags: ["JavaScript", "AST", "Lint"]},
+            {title: "Docker Compose Helper", description: "CLI tool to generate and manage Docker Compose files", category: "cli", tags: ["Go", "Docker", "YAML"]},
+            {title: "Dependency Vulnerability Scanner", description: "CLI that scans dependencies for security vulnerabilities", category: "cli", tags: ["Python", "Security", "Dependencies"]},
+            {title: "Environment Configuration Manager", description: "Manage environment variables across projects", category: "cli", tags: ["Go", "Config", "DevOps"]},
+            {title: "ASCII Art Generator", description: "CLI to convert images and text to ASCII art", category: "cli", tags: ["Python", "Image Processing"]},
+            {title: "Markdown Link Checker", description: "Validate all links in your markdown files", category: "cli", tags: ["Node.js", "Markdown"]},
+            {title: "Word Count Utility", description: "Count words, lines, and characters like wc", category: "cli", tags: ["Rust", "CLI", "Text"]},
+            {title: "Log File Analyzer", description: "Parse and summarize info from server logs", category: "cli", tags: ["Go", "Logs", "Parsing"]},
+            {title: "Random Password Generator", description: "CLI to securely generate random passwords", category: "cli", tags: ["Python", "Security"]},
+            {title: "Color Picker CLI", description: "Select and copy hex/RGB color codes from terminal", category: "cli", tags: ["Node.js", "Colors"]},
+            {title: "Batch File Renamer", description: "Rename files in bulk with patterns and regexes", category: "cli", tags: ["Bash", "Shell"]},
+            {title: "Simple HTTP Server", description: "Spin up a static file server from the terminal", category: "cli", tags: ["Node.js", "Express"]},
+            {title: "Github Issue Bulk Closer", description: "Close issues matching criteria in bulk", category: "cli", tags: ["Node.js", "GitHub API"]},
+            {title: "YouTube Caption Downloader", description: "Download and sync YouTube subtitles", category: "cli", tags: ["YouTube", "API", "Python"]},
+            {title: "Simple TTS Reader", description: "Reads selected text aloud in browser or CLI", category: "cli", tags: ["TTS", "Node.js"]},
+            {title: "Dotfiles Manager", description: "Keep dotfiles in sync across machines", category: "cli", tags: ["Shell", "Automation", "Config"]},
+            {title: "Terminal File Browser", description: "Navigate file system in terminal with previews", category: "cli", tags: ["Rust", "Terminal", "UX"]},
+            {title: "Source Code Formatter", description: "Format code for multiple languages", category: "cli", tags: ["Format", "Dev", "Python"]},
+            {title: "Terminal Weather App", description: "CLI weather report with icons and color", category: "cli", tags: ["Python", "API", "Weather"]},
+            {title: "ASCII Video Converter", description: "Convert videos to ASCII animation", category: "cli", tags: ["Python", "FFmpeg", "ASCII"]},
+            {title: "Tiny Chess Engine", description: "Minimal chess engine for CLI", category: "cli", tags: ["Python", "AI", "Games"]},
+            {title: "Invoice OCR Analyzer", description: "Extracts data from scanned invoices", category: "cli", tags: ["OCR", "Python", "Finance"]},
+
+            // ========== LIBRARY (20+ ideas) ==========
+            {title: "React Component Library", description: "Reusable accessible React components with Storybook docs", category: "library", tags: ["React", "TypeScript", "Storybook"]},
+            {title: "Authentication Library", description: "Flexible OAuth, JWT, multi-factor auth library", category: "library", tags: ["TypeScript", "Security", "Auth"]},
+            {title: "API Rate Limiter", description: "Distributed Redis-backed rate limiting library", category: "library", tags: ["JavaScript", "Redis", "Middleware"]},
+            {title: "Testing Utilities Library", description: "Helpers for unit/integration/E2E testing", category: "library", tags: ["Jest", "Testing", "TypeScript"]},
+            {title: "Internationalization Utils", description: "String formatting and localization helpers", category: "library", tags: ["i18n", "JavaScript", "Localization"]},
+            {title: "Date & Time Math Library", description: "Parsing, diffing, and time zone math", category: "library", tags: ["JavaScript", "Dates", "Time"]},
+            {title: "Sortable List Helper", description: "JS library for drag-and-drop sortable lists", category: "library", tags: ["JavaScript", "UX", "Drag-Drop"]},
+            {title: "Custom Form Validation", description: "Validate user input with rich constraints", category: "library", tags: ["JavaScript", "Forms", "Validation"]},
+            {title: "Notification/Toast Library", description: "Plug-and-play notification system for UIs", category: "library", tags: ["JavaScript", "Notifications", "UI"]},
+            {title: "Keyboard Shortcuts Handler", description: "Universal library for keyboard shortcut management", category: "library", tags: ["Keybinds", "JavaScript"]},
+            {title: "Visualization Helper", description: "Helpers for plotting data in JavaScript/React", category: "library", tags: ["Charts", "JavaScript", "D3.js"]},
+            {title: "Audio/Video Processing", description: "JS helpers for audio and video manipulation", category: "library", tags: ["JavaScript", "Multimedia", "Media"]},
+            {title: "Email Template Library", description: "Ready-to-use templates for transactional emails", category: "library", tags: ["HTML", "Email", "Templates"]},
+            {title: "Custom Emoji Picker", description: "React/Vue emoji selector component", category: "library", tags: ["Emoji", "JavaScript", "UI"]},
+            {title: "API Response Mocking", description: "Simulate HTTP API responses in tests", category: "library", tags: ["Node.js", "Testing", "Mock"]},
+            {title: "Fake Data Generator", description: "Generate names, emails, and fake data for tests", category: "library", tags: ["JavaScript", "Testing", "Faker"]},
+            {title: "Static Resume JSON Schema", description: "Standard schema for resumes with validators", category: "library", tags: ["JSON", "Schema", "Resume"]},
+            {title: "Code Syntax Highlighter", description: "Highlight code snippets for blogs", category: "library", tags: ["JavaScript", "Highlight.js", "Code"]},
+            {title: "CSS Animation Collection", description: "Curated CSS animation snippets and builder", category: "library", tags: ["CSS", "Animation", "UI"]},
+            {title: "Sortable Table Component", description: "React/Vue table with sorting and filtering", category: "library", tags: ["React", "Table", "UI"]},
+
+            // ========== AUTOMATION (15+ ideas) ==========
+            {title: "GitHub Actions Workflow Generator", description: "Tool to create CI/CD workflow files interactively", category: "automation", tags: ["GitHub Actions", "YAML", "CI/CD"]},
+            {title: "Log Aggregation Tool", description: "Collect and analyze logs from many systems", category: "automation", tags: ["ELK", "Logging", "Monitoring"]},
+            {title: "Data Pipeline Orchestrator", description: "Manage and schedule complex data pipelines", category: "automation", tags: ["Airflow", "Orchestration", "Python"]},
+            {title: "Social Media Scheduler", description: "Schedule and auto-post to multiple platforms", category: "automation", tags: ["APIs", "Scheduling", "Social"]},
+            {title: "Automatic Invoice Creator", description: "Turn tracked hours into invoices automatically", category: "automation", tags: ["PDF", "Node.js", "Finance"]},
+            {title: "Automated Database Backup", description: "Script to backup DBs and upload to cloud", category: "automation", tags: ["Bash", "S3", "Database"]},
+            {title: "Bulk Image Watermarker", description: "Watermark directories of images automatically", category: "automation", tags: ["Python", "PIL", "Images"]},
+            {title: "Time Tracker Automation", description: "Auto log and analyze screen/work time", category: "automation", tags: ["Python", "Metrics", "Tracking"]},
+            {title: "RSS Feed Aggregator", description: "Collect RSS feeds and auto-email digests", category: "automation", tags: ["Python", "RSS", "Email"]},
+            {title: "Game Save Backup Tool", description: "Automatically backs up local game saves to cloud", category: "automation", tags: ["Python", "Dropbox", "Backup"]},
+            {title: "Plant Care Reminder", description: "Track houseplants and watering schedules", category: "automation", tags: ["Notification", "Database", "Scheduling"]},
+            {title: "Newsletter Scheduler", description: "Plan and send recurring email newsletters", category: "automation", tags: ["Node.js", "Email", "Scheduling"]},
+            {title: "Static Site Comment Engine", description: "Simple comments for static site generators", category: "automation", tags: ["Node.js", "Static", "Comments"]},
+            {title: "Email Template Scheduler", description: "Schedule and manage recurring email templates", category: "automation", tags: ["Email", "Scheduling", "Templates"]},
+
+            // ========== DATA (15+ ideas) ==========
+            {title: "Data Visualization Dashboard", description: "Interactive dashboard for large datasets", category: "data", tags: ["Vue.js", "D3.js", "WebSocket", "PostgreSQL"]},
+            {title: "Time Series Database", description: "Lightweight TSDB for IoT and analytics", category: "data", tags: ["Rust", "Database", "Performance"]},
+            {title: "Machine Learning Model Trainer", description: "Framework for training and deploying ML models", category: "data", tags: ["Python", "TensorFlow", "ML"]},
+            {title: "Open Weather Data Collector", description: "Aggregate and visualize weather APIs", category: "data", tags: ["APIs", "Weather", "Visualization"]},
+            {title: "News Sentiment Analyzer", description: "Track news headlines and assign sentiment scores", category: "data", tags: ["Python", "NewsAPI", "Sentiment"]},
+            {title: "Public Transit Visualizer", description: "Explore and animate GTFS transit data", category: "data", tags: ["GTFS", "JavaScript", "Maps"]},
+            {title: "Music Recommendation System", description: "Recommend music based on user preferences", category: "data", tags: ["ML", "Python", "Spotify"]},
+            {title: "Reddit Data Explorer", description: "Visually analyze Reddit comment/post data", category: "data", tags: ["APIs", "D3.js", "Data"]},
+            {title: "Stock Market Analyzer", description: "Track stock prices and generate alerts", category: "data", tags: ["APIs", "Finance", "Charts"]},
+            {title: "Git Commit Visualizer", description: "Visualize commit history and contributor activity", category: "data", tags: ["Git", "D3.js", "Visualization"]},
+            {title: "Air Quality Monitor", description: "Track and visualize air quality indices", category: "data", tags: ["APIs", "Maps", "Data"]},
+            {title: "Spotify Analytics", description: "Visualize and analyze Spotify listening patterns", category: "data", tags: ["Spotify", "Music", "API"]},
+            {title: "Gaming Statistics Tracker", description: "Analyze gaming performance and stats over time", category: "data", tags: ["Charts", "Gaming", "Data"]},
+            {title: "Twitter Trend Analyzer", description: "Track trending topics and sentiment over time", category: "data", tags: ["Twitter", "Sentiment", "Data"]},
+            {title: "Health Data Dashboard", description: "Visualize health metrics from wearables", category: "data", tags: ["Wearables", "Health", "Charts"]}
+        ];
+
+        let currentIdea = null;
+        let selectedCategory = 'all';
+
+        const generateBtn = document.getElementById('generateBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const ideaDisplay = document.getElementById('ideaDisplay');
+        const copyFeedback = document.getElementById('copyFeedback');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+
+        function getRandomIdea() {
+            const filtered = selectedCategory === 'all' 
+                ? ideas 
+                : ideas.filter(idea => idea.category === selectedCategory);
+            
+            return filtered[Math.floor(Math.random() * filtered.length)];
+        }
+
+        function displayIdea(idea) {
+            currentIdea = idea;
+            const tagsHtml = (idea.tags || []).map(tag => `<span class="tag">${tag}</span>`).join('');
+            ideaDisplay.innerHTML = `
+                <div class="idea-title">${idea.title}</div>
+                <div class="idea-description">${idea.description}</div>
+                <div class="idea-tags">${tagsHtml}</div>
+            `;
+        }
+
+        function copyToClipboard() {
+            if (!currentIdea) return;
+            const text = `${currentIdea.title}\n${currentIdea.description}\n\nTags: ${(currentIdea.tags || []).join(', ')}`;
+            navigator.clipboard.writeText(text).then(() => {
+                copyFeedback.classList.add('show');
+                setTimeout(() => {
+                    copyFeedback.classList.remove('show');
+                }, 2000);
+            });
+        }
+
+        generateBtn.addEventListener('click', () => {
+            const idea = getRandomIdea();
+            displayIdea(idea);
+        });
+
+        copyBtn.addEventListener('click', copyToClipboard);
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedCategory = btn.dataset.category;
+            });
+        });
+
+        // Generate initial idea
+        displayIdea(getRandomIdea());
+    </script>
+</body>
+</html>
